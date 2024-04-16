@@ -14,7 +14,7 @@ class SendServiceTest {
     SendService sendService;
 
     @Test
-    @DisplayName("預設傳送方法")
+    @DisplayName("預設分區傳輸情境")
     public void syncSend() {
         //DefaultPartitioner:
         // If no partition or key is present choose the sticky partition that changes when the batch is full.
@@ -28,11 +28,40 @@ class SendServiceTest {
 
             if (lastPartition == null) {
                 lastPartition = metadata.partition();
-            }else{
+            } else {
                 int currentPartition = metadata.partition();
-                Assertions.assertNotEquals(lastPartition , currentPartition ,"未設定的情況，partition會輪詢");
+                Assertions.assertNotEquals(lastPartition, currentPartition, "未設定的情況，partition會輪詢");
 
                 lastPartition = currentPartition;
+            }
+        }
+    }
+
+    @Test
+    @DisplayName("指定分區傳輸情境")
+    public void specifyPartition() {
+        int partition = 0;
+        for (int i = 0; i < 10; i++) {
+            String message = Instancio.create(String.class);
+            RecordMetadata metadata = sendService.syncSend(partition, message);
+
+            Assertions.assertEquals(partition, metadata.partition(), "指定分區的情況，partition會一致");
+        }
+    }
+
+    @Test
+    @DisplayName("指定分區KEY傳輸情境")
+    public void specifyKey() {
+        String key = "SpecifyKey";
+        Integer lastPartition = null;
+        for (int i = 0; i < 10; i++) {
+            String message = Instancio.create(String.class);
+            RecordMetadata metadata = sendService.syncSend(key, message);
+
+            if (lastPartition == null) {
+                lastPartition = metadata.partition();
+            } else {
+                Assertions.assertEquals(lastPartition, metadata.partition(), "指定分區Key的情況，partition會一致");
             }
         }
     }
