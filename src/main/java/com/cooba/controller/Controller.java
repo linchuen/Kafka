@@ -19,7 +19,7 @@ public class Controller {
 
     @PostMapping("/sync")
     public ResponseEntity<Void> syncSend(){
-        sendService.syncSend();
+        sendService.syncSend("message");
         return ResponseEntity.ok().build();
     }
 }

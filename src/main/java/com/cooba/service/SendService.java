@@ -22,14 +22,39 @@ public class SendService {
         log.info("send async Data success");
     }
 
-    public void syncSend() {
+    public RecordMetadata syncSend(String message) {
         try {
-            SendResult<String, String> syncData = kafkaTemplate.send(KafkaTopicConfig.TEST, "test send sync Data").get();
+            SendResult<String, String> syncData = kafkaTemplate.send(KafkaTopicConfig.TEST, message).get();
             log.info("send sync Data success");
             ProducerRecord<String, String> producerRecord = syncData.getProducerRecord();
             log.info("topic: {} assign partition: {}", producerRecord.topic(), producerRecord.partition());
             RecordMetadata metadata = syncData.getRecordMetadata();
             log.info("actual partition: {}", metadata.partition());
+            return metadata;
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public RecordMetadata syncSend(int partition, String message) {
+        try {
+            SendResult<String, String> syncData = kafkaTemplate.send(KafkaTopicConfig.TEST, partition, "", message).get();
+            log.info("send sync Data with partition");
+            RecordMetadata metadata = syncData.getRecordMetadata();
+            log.info("actual partition: {}", metadata.partition());
+            return metadata;
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public RecordMetadata syncSend(String key, String message) {
+        try {
+            SendResult<String, String> syncData = kafkaTemplate.send(KafkaTopicConfig.TEST, key, message).get();
+            log.info("send sync Data with key");
+            RecordMetadata metadata = syncData.getRecordMetadata();
+            log.info("actual partition: {}", metadata.partition());
+            return metadata;
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
