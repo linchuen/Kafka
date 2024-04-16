@@ -1,5 +1,6 @@
 package com.cooba.service;
 
+import com.cooba.config.KafkaTopicConfig;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.Assertions;
@@ -7,11 +8,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.kafka.core.KafkaTemplate;
 
 @SpringBootTest
 class SendServiceTest {
     @Autowired
     SendService sendService;
+    @Autowired
+    KafkaTemplate<String,String> kafkaTemplate;
 
     @Test
     @DisplayName("預設分區傳輸情境")

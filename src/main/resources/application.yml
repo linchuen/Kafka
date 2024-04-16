@@ -3,6 +3,10 @@ spring:
   kafka:
     #設定kafka的broker位址
     bootstrap-servers: "127.0.0.1:9092"
+    # properties:
+      # enable:
+        # Must set acks to all in order to use the idempotent producer. Otherwise we cannot guarantee idempotence.
+        # idempotence: true
 
     consumer:
       bootstrap-servers: "127.0.0.1:9092"
@@ -36,7 +40,7 @@ spring:
       #“0”：表示生產者資料傳送到leader就算寫入成功
       #“1"：表示生產者資料傳送到leader並寫入到磁碟才算寫入成功
       #“-1”， “all“：表示生產者把資料送到leader，並同步到其他副本，才算資料寫入成功
-      #acks:
+      acks: "1"
       # Default batch size. A small batch size will make batching less common and may reduce throughput (a batch size of zero disables batching entirely).
       #batch-size:
       # Total memory size the producer can use to buffer records waiting to be sent to the server.
